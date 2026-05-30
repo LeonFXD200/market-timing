@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Estimate Facebook Marketplace listing time-to-sale using your own local history."
+    />
+    <title>Market Timing</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">LOCAL MARKETPLACE ANALYSIS</p>
+        <h1>Market Timing</h1>
+      </div>
+      <div class="header-actions">
+        <button class="button button-secondary" id="share-button" type="button" title="Share this analyzer">
+          <span aria-hidden="true">↗</span> Share
+        </button>
+        <button class="button button-secondary" id="export-button" type="button" title="Export CSV">
+          <span aria-hidden="true">↓</span> Export
+        </button>
+        <label class="button button-secondary file-button" title="Import CSV">
+          <span aria-hidden="true">↑</span> Import
+          <input id="import-input" type="file" accept=".csv,text/csv" />
+        </label>
+      </div>
+    </header>
+
+    <main>
+      <section class="notice" aria-label="Privacy note">
+        <strong>Private by default.</strong>
+        Data stays in this browser. Add listings manually or import a CSV; no Facebook login or paid API is used.
+      </section>
+
+      <section class="metrics" aria-label="Summary">
+        <article>
+          <p>Observed average sale time</p>
+          <strong id="observed-average">–</strong>
+          <small id="observed-caption">Add a sold listing to begin</small>
+        </article>
+        <article>
+          <p>Adjusted average sale time</p>
+          <strong id="adjusted-average">–</strong>
+          <small id="adjusted-caption">Includes likely sales</small>
+        </article>
+        <article>
+          <p>Likely sold but unmarked</p>
+          <strong id="likely-count">0</strong>
+          <small id="likely-caption">Based on age and price</small>
+        </article>
+        <article>
+          <p>Tracked listings</p>
+          <strong id="tracked-count">0</strong>
+          <small id="category-caption">Across 0 categories</small>
+        </article>
+      </section>
+
+      <section class="workspace">
+        <aside class="panel form-panel">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">ADD LISTING</p>
+              <h2>Track an item</h2>
+            </div>
+            <button class="icon-button" id="demo-button" type="button" title="Load demo listings">＋</button>
+          </div>
+          <form id="listing-form">
+            <label>
+              Listing title
+              <input name="title" required placeholder="e.g. IKEA desk" />
+            </label>
+            <div class="form-grid">
+              <label>
+                Category
+                <input name="category" required placeholder="Furniture" />
+              </label>
+              <label>
+                Price
+                <span class="currency-input"><span>£</span><input name="price" required min="0" step="0.01" type="number" placeholder="45" /></span>
+              </label>
+            </div>
+            <label>
+              Listing link
+              <input name="url" type="url" placeholder="https://www.facebook.com/marketplace/item/…" />
+            </label>
+            <div class="form-grid">
+              <label>
+                Listed on
+                <input name="listedAt" required type="date" />
+              </label>
+              <label>
+                Status
+                <select name="status" id="status-select">
+                  <option value="active">Active</option>
+                  <option value="sold">Sold</option>
+                  <option value="removed">Removed</option>
+                </select>
+              </label>
+            </div>
+            <label id="sold-date-label" hidden>
+              Sold on
+              <input name="soldAt" type="date" />
+            </label>
+            <button class="button button-primary" type="submit">Add listing</button>
+          </form>
+        </aside>
+
+        <section class="panel table-panel">
+          <div class="section-heading table-heading">
+            <div>
+              <p class="eyebrow">LISTING HISTORY</p>
+              <h2>Tracked items</h2>
+            </div>
+            <div class="filters">
+              <input id="search-input" type="search" placeholder="Search listings" aria-label="Search listings" />
+              <select id="filter-select" aria-label="Filter by status">
+                <option value="all">All statuses</option>
+                <option value="sold">Sold</option>
+                <option value="active">Active</option>
+                <option value="likely">Likely sold</option>
+                <option value="removed">Removed</option>
+              </select>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Listing</th>
+                  <th>Price</th>
+                  <th>Age</th>
+                  <th>Status</th>
+                  <th>Sale likelihood</th>
+                  <th><span class="sr-only">Actions</span></th>
+                </tr>
+              </thead>
+              <tbody id="listing-table"></tbody>
+            </table>
+            <div class="empty-state" id="empty-state">
+              <strong>No listings yet</strong>
+              <p>Add your first item or load the demo data.</p>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section class="insights">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">CATEGORY BENCHMARKS</p>
+            <h2>Where items move fastest</h2>
+          </div>
+        </div>
+        <div class="category-grid" id="category-grid"></div>
+      </section>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="app.js"></script>
+  </body>
+</html>
